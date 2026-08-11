@@ -93,7 +93,7 @@ export const GET_INVOLVED = {
 export const CONTACT_CONTENT = {
   title: 'Connect With Us',
   paragraphs: [
-    'Have questions? Looking for a Lifezone community? Need prayer?',
+    'Have questions? Looking for a community? Need prayer?',
     "We're just a message away. Reach out through our social media channels, and someone from our team will gladly connect with you.",
   ],
 };
