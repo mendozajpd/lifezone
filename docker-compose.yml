@@ -1,0 +1,44 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    environment:
+      - BROWSER=none
+    ports:
+      - "8081:8081"
+      - "19000-19002:19000-19002"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+
+  # Hermetic preview of the production static export (npx expo export -p web + `serve`).
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    ports:
+      - "3000:3000"
+
+  # firebase-tools container. Run `docker compose up firebase` for the hosting emulator, or
+  # `docker compose run --rm firebase deploy --only hosting` once real credentials are set.
+  firebase:
+    build:
+      context: .
+      dockerfile: docker/firebase/Dockerfile
+    volumes:
+      - ./dist:/firebase/dist:ro
+      - ./secrets:/firebase/secrets:ro
+    environment:
+      - FIREBASE_TOKEN=${FIREBASE_TOKEN:-}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID:-}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS:-}
+    ports:
+      - "5000:5000"
+      - "8082:8080" # host 8082 -> container 8080 (firestore emulator), avoids clashing with other local services on 8080
+      - "9099:9099"
+      - "4000:4000"

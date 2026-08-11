@@ -1,0 +1,16 @@
+node_modules
+.expo
+dist
+web-build
+.git
+.gitignore
+*.log
+android
+ios
+.env
+.env.*
+!.env.example
+secrets
+.vscode
+README.md
+docker-compose.yml
