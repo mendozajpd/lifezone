@@ -6,18 +6,21 @@ type ButtonProps = {
   label: string;
   onPress?: (event: GestureResponderEvent) => void;
   variant?: 'solid' | 'outline';
+  disabled?: boolean;
 };
 
-export function Button({ label, onPress, variant = 'solid' }: ButtonProps) {
+export function Button({ label, onPress, variant = 'solid', disabled = false }: ButtonProps) {
   const isOutline = variant === 'outline';
 
   return (
     <Pressable
       onPress={onPress}
+      disabled={disabled}
       style={({ pressed }) => [
         styles.base,
         isOutline ? styles.outline : styles.solid,
         pressed && styles.pressed,
+        disabled && styles.disabled,
       ]}>
       <Text style={[styles.label, isOutline && styles.outlineLabel]}>{label}</Text>
     </Pressable>
@@ -41,6 +44,9 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.8,
+  },
+  disabled: {
+    opacity: 0.5,
   },
   label: {
     fontFamily: Fonts.bodySemiBold,

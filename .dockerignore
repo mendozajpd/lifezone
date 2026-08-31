@@ -10,6 +10,7 @@ ios
 .env
 .env.*
 !.env.example
+!functions/.env
 secrets
 .vscode
 README.md

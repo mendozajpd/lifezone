@@ -1,6 +1,7 @@
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Section } from '@/components/layout/section';
+import { ContactForm } from '@/components/sections/contact-form';
 import { CONTACT_CONTENT, CONTACT_INFO, SECTION_BACKGROUNDS } from '@/constants/content';
 import { Colors, Fonts, Spacing } from '@/constants/theme';
 
@@ -20,6 +21,8 @@ export function Contact() {
           <Text style={styles.rowValue}>{CONTACT_INFO.address}</Text>
         </View>
       </View>
+
+      <ContactForm />
 
       <View style={styles.social}>
         {CONTACT_INFO.social.map((link) => (
