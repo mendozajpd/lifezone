@@ -1,37 +1,31 @@
 import { Platform, ScrollView, StyleSheet } from 'react-native';
 
-import { Footer } from '@/components/layout/footer';
 import { NavBar } from '@/components/layout/nav-bar';
-import { Contact } from '@/components/sections/contact';
-import { Gallery } from '@/components/sections/gallery';
-import { GetInvolved } from '@/components/sections/get-involved';
-import { Hero } from '@/components/sections/hero';
-import { Ministry } from '@/components/sections/ministry';
-import { Vision } from '@/components/sections/vision';
+import { PageMeta } from '@/components/layout/page-meta';
 import { HEADER_HEIGHT } from '@/constants/layout';
+import { SITE_TITLE } from '@/constants/site-meta';
 import { Colors } from '@/constants/theme';
 import { useScroll } from '@/context/scroll-context';
+import { SiteRenderProvider } from '@/render/context';
+import { SiteRenderer } from '@/render/site-renderer';
+import { usePublishedSite } from '@/render/use-published-site';
 
 export default function HomeScreen() {
   const { scrollRef } = useScroll();
+  const { version } = usePublishedSite();
 
   return (
-    <>
+    <SiteRenderProvider version={version}>
+      <PageMeta title={version.meta.title || SITE_TITLE} description={version.meta.description} />
       <NavBar />
       <ScrollView
         ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}>
-        <Hero/>
-        <Vision />
-        <Ministry />
-        <Gallery />
-        <GetInvolved />
-        <Contact />
-        <Footer />
+        <SiteRenderer />
       </ScrollView>
-    </>
+    </SiteRenderProvider>
   );
 }
 

@@ -1,12 +1,13 @@
-import { Link, Stack } from 'expo-router';
+import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { PageMeta } from '@/components/layout/page-meta';
 import { Colors, Fonts } from '@/constants/theme';
 
 export default function NotFoundScreen() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Not found' }} />
+      <PageMeta />
       <View style={styles.container}>
         <Text style={styles.title}>This screen doesn&apos;t exist.</Text>
         <Link href="/" style={styles.link}>

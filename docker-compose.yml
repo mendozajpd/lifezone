@@ -24,8 +24,9 @@ services:
     ports:
       - "3000:3000"
 
-  # firebase-tools container. Run `docker compose up firebase` for the hosting emulator, or
-  # `docker compose run --rm firebase deploy --only hosting` once real credentials are set.
+  # firebase-tools container. Run `docker compose up firebase` for the hosting, auth and
+  # firestore emulators, or `docker compose run --rm firebase deploy --only hosting` once
+  # real credentials are set.
   firebase:
     build:
       context: .
@@ -33,12 +34,24 @@ services:
     volumes:
       - ./dist:/firebase/dist:ro
       - ./secrets:/firebase/secrets:ro
+      # Bind-mounted so rules and emulator-config edits only need a container
+      # restart, not an image rebuild.
+      - ./firestore.rules:/firebase/firestore.rules:ro
+      - ./firebase.json:/firebase/firebase.json:ro
+      - ./storage.rules:/firebase/storage.rules:ro
     environment:
       - FIREBASE_TOKEN=${FIREBASE_TOKEN:-}
       - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID:-}
       - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS:-}
     ports:
       - "5000:5000"
-      - "8082:8080" # host 8082 -> container 8080 (firestore emulator), avoids clashing with other local services on 8080
+      # The Emulator UI runs in the host browser but is told each emulator's
+      # CONTAINER-side address, so these must be published 1:1 — a host:container
+      # mismatch makes the UI fetch a port nothing is listening on and the tab
+      # renders blank. Firestore therefore runs on 8082 inside the container too
+      # (see firebase.json), which also keeps host 8080 free for other services.
+      - "8082:8082" # firestore emulator
+      - "9150:9150" # firestore websocket, used by the UI's live document view
       - "9099:9099"
+      - "9199:9199" # storage emulator
       - "4000:4000"

@@ -1,7 +1,7 @@
 import type { ExpoConfig } from 'expo/config';
 
 const config: ExpoConfig = {
-  name: 'Lifezone Tacloban',
+  name: 'Lifezone Campus - NL Tacloban',
   slug: 'lifezone',
   version: '1.0.0',
   orientation: 'portrait',

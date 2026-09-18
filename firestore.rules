@@ -1,0 +1,48 @@
+rules_version = '2';
+
+// Access model
+// ------------
+// There is no self-registration. An account can edit the site only if a
+// document exists at `admins/{their email}`, which is seeded out of band.
+//
+// Visitors never read Firestore at all — the public site fetches a published
+// JSON snapshot from Hosting/Storage — so nothing here is world-readable.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null && request.auth.token.email != null;
+    }
+
+    // `email_verified` matters even though the app only offers Google sign-in:
+    // the app's choice of provider is not enforced server-side. If the
+    // email/password provider is ever enabled on the project, anyone could
+    // register an *unverified* account using an editor's address and otherwise
+    // satisfy the allowlist. Keep the email/password provider disabled too.
+    function isEditor() {
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    // The allowlist itself. An editor may read their own entry so the UI can
+    // explain why access was refused; nobody may write one from a browser.
+    match /admins/{email} {
+      allow get: if signedIn() && request.auth.token.email == email;
+      allow list: if false;
+      allow write: if false;
+    }
+
+    // Site content: versions (saved templates), published revisions, media
+    // metadata. Editors only.
+    match /sites/{siteId} {
+      allow read, write: if isEditor();
+
+      match /{document=**} {
+        allow read, write: if isEditor();
+      }
+    }
+
+    // Anything not matched above is denied by default.
+  }
+}
